@@ -1,14 +1,10 @@
-package com.thinkfaster.model.scene.menu;
+package com.thinkfaster.model.scene;
 
-import com.thinkfaster.manager.ResourcesManager;
+import com.thinkfaster.manager.IResourcesManager;
 import com.thinkfaster.manager.SceneManager;
-import com.thinkfaster.model.scene.BaseScene;
+import com.thinkfaster.manager.resources.MainMenuResourcesManager;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
-import org.andengine.entity.modifier.DelayModifier;
-import org.andengine.entity.modifier.LoopEntityModifier;
-import org.andengine.entity.modifier.RotationByModifier;
-import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.item.IMenuItem;
 import org.andengine.entity.scene.menu.item.SpriteMenuItem;
@@ -27,9 +23,15 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
     private final int RECORDS = 4;
 
     private MenuScene menuScene;
+    private MainMenuResourcesManager resourcesManager;
+
+    public MainMenuScene(IResourcesManager resourcesManager) {
+        super(resourcesManager);
+        this.resourcesManager = (MainMenuResourcesManager) resourcesManager;
+    }
 
     @Override
-    public void createScene(Object... objects) {
+    public void createScene() {
         clear();
         createBackground();
         createButtons();
@@ -54,27 +56,17 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
     public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem, float pMenuItemLocalX, float pMenuItemLocalY) {
         switch (pMenuItem.getID()) {
             case NEW_GAME:
-                SceneManager.getInstance().loadGameTypeScene();
-                break;
-            case ABOUT:
-                SceneManager.getInstance().loadAboutScene();
+                SceneManager.getInstance().loadGameScene();
                 break;
             case EXIT:
                 System.exit(0);
             case RECORDS:
-                SceneManager.getInstance().loadHighScoreSceneFrom(SceneType.MENU);
+                SceneManager.getInstance().loadHighScoreSceneFrom();
                 break;
             default:
                 return false;
         }
         return false;
-    }
-
-    private LoopEntityModifier createRotationModifier(int rotationAngle) {
-        return new LoopEntityModifier(
-                new SequenceEntityModifier(
-                        new RotationByModifier(1, rotationAngle),
-                        new DelayModifier(0.02f)));
     }
 
     private void clear() {
@@ -92,8 +84,8 @@ public class MainMenuScene extends BaseScene implements MenuScene.IOnMenuItemCli
         menuScene = new MenuScene(camera);
         menuScene.setPosition(0, 0);
 
-        final IMenuItem newGameItem = new ScaleMenuItemDecorator(new SpriteMenuItem(NEW_GAME, ResourcesManager.getInstance().getPlayButtonTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
-        final IMenuItem recordsItem = new ScaleMenuItemDecorator(new SpriteMenuItem(RECORDS, ResourcesManager.getInstance().getHighscoresButtonTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem newGameItem = new ScaleMenuItemDecorator(new SpriteMenuItem(NEW_GAME, resourcesManager.getPlayButtonTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
+        final IMenuItem recordsItem = new ScaleMenuItemDecorator(new SpriteMenuItem(RECORDS, resourcesManager.getHighscoresButtonTextureRegion(), vertexBufferObjectManager), 1.2f, 1);
         recordsItem.setColor(new Color(0.51f, 0.51f, 0.51f));
 
         menuScene.addMenuItem(newGameItem);

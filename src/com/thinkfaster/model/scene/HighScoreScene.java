@@ -1,8 +1,8 @@
-package com.thinkfaster.model.scene.menu;
+package com.thinkfaster.model.scene;
 
-import com.thinkfaster.manager.ResourcesManager;
+import com.thinkfaster.manager.IResourcesManager;
 import com.thinkfaster.manager.SceneManager;
-import com.thinkfaster.model.scene.BaseScene;
+import com.thinkfaster.manager.resources.HighscoresResourcesManager;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.entity.scene.IOnSceneTouchListener;
@@ -12,12 +12,19 @@ import org.andengine.input.touch.TouchEvent;
 
 /**
  * User: Breku
- * Date: 21.09.13
+ * Date: 06.10.13
  */
-public class AboutScene extends BaseScene implements IOnSceneTouchListener {
+public class HighScoreScene extends BaseScene implements IOnSceneTouchListener {
+
+    private HighscoresResourcesManager resourcesManager;
+
+    public HighScoreScene(IResourcesManager resourcesManager) {
+        super(resourcesManager);
+        this.resourcesManager = (HighscoresResourcesManager) resourcesManager;
+    }
 
     @Override
-    public void createScene(Object... objects) {
+    public void createScene() {
         createBackground();
         setOnSceneTouchListener(this);
     }
@@ -29,12 +36,12 @@ public class AboutScene extends BaseScene implements IOnSceneTouchListener {
 
     @Override
     public SceneType getSceneType() {
-        return SceneType.ABOUT;
+        return SceneType.RECORDS;
     }
 
     @Override
     public void disposeScene() {
-        ResourcesManager.getInstance().unloadAboutTextures();
+        resourcesManager.unloadResources();
     }
 
     @Override
@@ -46,6 +53,7 @@ public class AboutScene extends BaseScene implements IOnSceneTouchListener {
     }
 
     private void createBackground() {
-        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2, resourcesManager.getAboutBackgroundTextureRegion(), vertexBufferObjectManager));
+        attachChild(new Sprite(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2,
+                resourcesManager.getRecordBackgroundTextureRegion(), vertexBufferObjectManager));
     }
 }

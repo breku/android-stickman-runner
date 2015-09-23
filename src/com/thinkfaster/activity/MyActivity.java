@@ -6,9 +6,10 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import com.purplebrain.adbuddiz.sdk.AdBuddiz;
-import com.thinkfaster.manager.ResourcesManager;
 import com.thinkfaster.manager.SceneManager;
+import com.thinkfaster.manager.resources.*;
 import com.thinkfaster.util.ContextConstants;
+import com.thinkfaster.util.SceneType;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -56,8 +57,14 @@ public class MyActivity extends BaseGameActivity {
     @Override
     public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws IOException {
         Log.i(TAG, ">> Creating resources");
-        ResourcesManager.prepareManager(getEngine(), this, camera, getVertexBufferObjectManager());
-        SceneManager.prepareManager(this);
+        SceneManager.prepareManager(this, getEngine());
+
+        SceneManager.addResourceManager(SceneType.SPLASH, new SplashResourcesManager(this, camera, getEngine()));
+        SceneManager.addResourceManager(SceneType.MENU, new MainMenuResourcesManager(this, camera, getEngine()));
+        SceneManager.addResourceManager(SceneType.SINGLE_PLAYER_GAME, new GameResourcesManager(this, camera, getEngine()));
+        SceneManager.addResourceManager(SceneType.LOADING, new LoadingResourcesManager(this, camera, getEngine()));
+        SceneManager.addResourceManager(SceneType.RECORDS, new HighscoresResourcesManager(this, camera, getEngine()));
+
         pOnCreateResourcesCallback.onCreateResourcesFinished();
         Log.i(TAG, "<< Creating resources finished");
     }

@@ -1,8 +1,8 @@
 package com.thinkfaster.service;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import com.thinkfaster.manager.ResourcesManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +14,13 @@ import java.util.Set;
  */
 public class DatabaseService {
 
-    private SharedPreferences sharedPreferences = ResourcesManager.getInstance().getActivity().getPreferences(Context.MODE_PRIVATE);
+    private final Activity activity;
+    private SharedPreferences sharedPreferences;
+
+    public DatabaseService(Activity activity) {
+        this.activity = activity;
+        sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE);
+    }
 
     public void save(String key, List<String> value) {
         final SharedPreferences.Editor editor = sharedPreferences.edit();

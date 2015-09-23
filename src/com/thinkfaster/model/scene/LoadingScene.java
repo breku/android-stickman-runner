@@ -1,7 +1,7 @@
 package com.thinkfaster.model.scene;
 
-import android.util.Log;
-import com.thinkfaster.manager.ResourcesManager;
+import com.thinkfaster.manager.IResourcesManager;
+import com.thinkfaster.manager.resources.LoadingResourcesManager;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.engine.handler.IUpdateHandler;
@@ -22,9 +22,15 @@ public class LoadingScene extends BaseScene {
 
     private static final String TAG = "LoadingScene";
     private float runningTime;
+    private LoadingResourcesManager resourcesManager;
+
+    public LoadingScene(IResourcesManager resourcesManager) {
+        super(resourcesManager);
+        this.resourcesManager = (LoadingResourcesManager) resourcesManager;
+    }
 
     @Override
-    public void createScene(Object... objects) {
+    public void createScene() {
         clear();
         createBackground();
         createLoadingText();
@@ -81,13 +87,13 @@ public class LoadingScene extends BaseScene {
     }
 
     private Text createDotText(final int xOffset) {
-        return new Text(ContextConstants.SCREEN_WIDTH / 2 + xOffset, ContextConstants.SCREEN_HEIGHT / 2, ResourcesManager.getInstance().getChalkFont(),
+        return new Text(ContextConstants.SCREEN_WIDTH / 2 + xOffset, ContextConstants.SCREEN_HEIGHT / 2, resourcesManager.getFont(android.graphics.Color.BLACK),
                 ".", 3, new TextOptions(HorizontalAlign.LEFT), vertexBufferObjectManager);
     }
 
     private void createLoadingText() {
-        attachChild(new Text(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2, ResourcesManager.getInstance().getChalkFont(),
-                "loading", vertexBufferObjectManager));
+        attachChild(new Text(ContextConstants.SCREEN_WIDTH / 2, ContextConstants.SCREEN_HEIGHT / 2, resourcesManager.getFont(android.graphics.Color.BLACK),
+                "loading", resourcesManager.getVertexBufferObjectManager()));
     }
 
     private void clear() {
