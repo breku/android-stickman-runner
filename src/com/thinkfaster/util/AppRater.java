@@ -15,8 +15,8 @@ import android.widget.TextView;
  * Date: 28.04.14
  */
 public class AppRater {
-    private final static String APP_TITLE = "Animals Matching";
-    private final static String APP_PNAME = "com.brekol.memory";
+    private final static String APP_TITLE = "Stickman Runner";
+    private final static String APP_PNAME = "com.brekol.stickmanrunner";
 
     private final static int DAYS_UNTIL_PROMPT = 1;
     private final static int LAUNCHES_UNTIL_PROMPT = 5;
