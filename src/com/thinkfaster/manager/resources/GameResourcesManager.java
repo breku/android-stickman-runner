@@ -12,6 +12,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.IBitmapTextureAtlasSourc
 import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtlasBuilder;
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
 /**
@@ -23,9 +24,14 @@ public class GameResourcesManager extends AbstractResourcesManager {
 
     private BuildableBitmapTextureAtlas gameTextureAtlas;
     private ITiledTextureRegion playerTiledTextureRegion;
+    private TextureRegion buttonTextureRegion;
 
     public GameResourcesManager(BaseGameActivity activity, Camera camera, Engine engine) {
         super(activity, camera, engine);
+    }
+
+    public TextureRegion getButtonTextureRegion() {
+        return buttonTextureRegion;
     }
 
     @Override
@@ -54,6 +60,7 @@ public class GameResourcesManager extends AbstractResourcesManager {
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.DEFAULT);
 
         playerTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "runnerspritesheet.png", 9, 1);
+        buttonTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "goldStar.png");
         loadGameAtlases();
     }
 

@@ -1,10 +1,13 @@
 package com.thinkfaster.model.scene;
 
 import android.util.Log;
+import com.thinkfaster.factory.GameFactory;
 import com.thinkfaster.handler.TimeUpdateHandler;
 import com.thinkfaster.manager.IResourcesManager;
 import com.thinkfaster.manager.SceneManager;
 import com.thinkfaster.manager.resources.GameResourcesManager;
+import com.thinkfaster.model.shape.GameButton;
+import com.thinkfaster.model.shape.Player;
 import com.thinkfaster.util.ContextConstants;
 import com.thinkfaster.util.SceneType;
 import org.andengine.engine.camera.hud.HUD;
@@ -28,7 +31,13 @@ public class GameScene extends BaseScene {
 
     private HUD gameHUD;
     private Text timerText;
+    private Text frameRateText;
     private GameResourcesManager resourcesManager;
+    private GameFactory gameFactory;
+    private Player player;
+    private GameButton buttonPlus;
+    private GameButton buttonMinus;
+    private int frameRate = 50;
 
     public GameScene(IResourcesManager resourcesManager) {
         super(resourcesManager);
@@ -36,15 +45,12 @@ public class GameScene extends BaseScene {
     }
 
     @Override
-    public void initializeServices() {
-
-    }
-
-    @Override
     public void createScene() {
         clear();
         init();
         createBackground();
+        createPlayer();
+        createButtons();
         createHUD();
         registerUpdateHandlers();
     }
@@ -68,10 +74,26 @@ public class GameScene extends BaseScene {
         resourcesManager.unloadResources();
     }
 
+    private void createButtons() {
+        buttonMinus = gameFactory.createGameButton(100, 100);
+        buttonPlus = gameFactory.createGameButton(700, 100);
+        registerTouchArea(buttonPlus);
+        registerTouchArea(buttonMinus);
+        attachChild(buttonPlus);
+        attachChild(buttonMinus);
+    }
+
+    private void createPlayer() {
+        player = gameFactory.createPlayer();
+        player.animate(frameRate);
+        attachChild(player);
+    }
+
     private void clear() {
         clearChildScene();
         clearUpdateHandlers();
         clearTouchAreas();
+        clearEntityModifiers();
     }
 
     private void registerUpdateHandlers() {
@@ -85,8 +107,8 @@ public class GameScene extends BaseScene {
         Log.i(TAG, ">> Registered handlers: " + updateHandlerList);
     }
 
-    private void init(Object... objects) {
-
+    private void init() {
+        gameFactory = new GameFactory(resourcesManager);
     }
 
     private void createBackground() {
@@ -99,17 +121,38 @@ public class GameScene extends BaseScene {
 
         Text timeText = new Text(380, 440, resourcesManager.getFont(android.graphics.Color.BLACK), "Time: ", new TextOptions(HorizontalAlign.LEFT), vertexBufferObjectManager);
         timerText = new Text(490, 440, resourcesManager.getFont(android.graphics.Color.BLACK), "0123456789", 30, new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
+        frameRateText = new Text(100, 440, resourcesManager.getFont(android.graphics.Color.BLACK), "0123456789", 30, new TextOptions(HorizontalAlign.CENTER), vertexBufferObjectManager);
         timerText.setText("00.00");
+        frameRateText.setText(String.valueOf(frameRate));
 
         gameHUD.attachChild(timeText);
         gameHUD.attachChild(timerText);
+        gameHUD.attachChild(frameRateText);
 
         camera.setHUD(gameHUD);
+    }
+
+    private void handleButtons() {
+        if (buttonPlus.isClicked()) {
+            buttonPlus.setClicked(false);
+            frameRate += 5;
+            player.animate(frameRate);
+            frameRateText.setText(String.valueOf(frameRate));
+        }
+
+        if (buttonMinus.isClicked()) {
+            buttonMinus.setClicked(false);
+            frameRate -= 5;
+            player.animate(frameRate);
+            frameRateText.setText(String.valueOf(frameRate));
+        }
     }
 
     @Override
     protected void onManagedUpdate(float pSecondsElapsed) {
         super.onManagedUpdate(pSecondsElapsed);
+
+        handleButtons();
 
         sortChildren();
     }
