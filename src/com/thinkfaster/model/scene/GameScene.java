@@ -1,6 +1,8 @@
 package com.thinkfaster.model.scene;
 
+import android.hardware.SensorManager;
 import android.util.Log;
+import com.badlogic.gdx.math.Vector2;
 import com.thinkfaster.factory.GameFactory;
 import com.thinkfaster.handler.TimeUpdateHandler;
 import com.thinkfaster.manager.IResourcesManager;
@@ -15,6 +17,8 @@ import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
+import org.andengine.extension.debugdraw.DebugRenderer;
+import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.adt.color.Color;
 
@@ -38,6 +42,9 @@ public class GameScene extends BaseScene {
     private GameButton buttonPlus;
     private GameButton buttonMinus;
     private int frameRate = 50;
+    private DebugRenderer debugRenderer;
+
+    private PhysicsWorld physicsWorld;
 
     public GameScene(IResourcesManager resourcesManager) {
         super(resourcesManager);
@@ -85,7 +92,6 @@ public class GameScene extends BaseScene {
 
     private void createPlayer() {
         player = gameFactory.createPlayer();
-        player.animate(frameRate);
         attachChild(player);
     }
 
@@ -99,6 +105,7 @@ public class GameScene extends BaseScene {
     private void registerUpdateHandlers() {
         final List<IUpdateHandler> updateHandlerList = new LinkedList<>();
         updateHandlerList.add(new TimeUpdateHandler(timerText));
+        updateHandlerList.add(physicsWorld);
 
         for (IUpdateHandler iUpdateHandler : updateHandlerList) {
             registerUpdateHandler(iUpdateHandler);
@@ -108,7 +115,10 @@ public class GameScene extends BaseScene {
     }
 
     private void init() {
-        gameFactory = new GameFactory(resourcesManager);
+        physicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
+        gameFactory = new GameFactory(resourcesManager, physicsWorld);
+        debugRenderer = new DebugRenderer(physicsWorld, resourcesManager.getVertexBufferObjectManager());
+        attachChild(debugRenderer);
     }
 
     private void createBackground() {
@@ -133,18 +143,17 @@ public class GameScene extends BaseScene {
     }
 
     private void handleButtons() {
-        if (buttonPlus.isClicked()) {
-            buttonPlus.setClicked(false);
-            frameRate += 5;
-            player.animate(frameRate);
-            frameRateText.setText(String.valueOf(frameRate));
-        }
 
         if (buttonMinus.isClicked()) {
             buttonMinus.setClicked(false);
             frameRate -= 5;
             player.animate(frameRate);
             frameRateText.setText(String.valueOf(frameRate));
+        }
+
+        if (buttonPlus.isClicked()) {
+            buttonMinus.setClicked(false);
+            player.startRunning();
         }
     }
 
