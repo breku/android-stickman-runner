@@ -59,9 +59,10 @@ public class GameResourcesManager extends AbstractResourcesManager {
 
         gameTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.DEFAULT);
 
-        playerTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "runnerspritesheet.png", 9, 1);
+        playerTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "runnerspritesheet.png", 14, 1);
         buttonTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "goldStar.png");
         loadGameAtlases();
+
     }
 
     private void loadGameAtlases() {
